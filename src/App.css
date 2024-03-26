@@ -1,0 +1,39 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.continer{
+  display: flex;
+  width: 100%;
+  max-width: 1440px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 5% 20%;
+}
+.arrow{
+  display: flex;
+  width: 100%;
+  text-align: start;
+  margin: 20px 0;
+  justify-content: flex-start ;
+  align-items: center;
+  text-decoration: none;
+  color: #db1f1f;
+  font-family: "Cuprum";
+  font-style: normal;
+  font-size: 16px;
+}
+
+@media (max-width: 1279px) {
+  .continer{
+    margin: 5px 20px;
+  }
+  .arrow{
+    justify-content: center;
+  }
+}
