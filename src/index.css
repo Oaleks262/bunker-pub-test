@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cuprum:ital,wght@0,400..700;1,400..700&family=Rubik+Dirt&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Dirt&display=swap');
-*{
-  background-color: #111111;
-}
+
 body {
   box-sizing: border-box;
   margin: 0;
