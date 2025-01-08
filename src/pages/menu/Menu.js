@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../img/logo/template.svg"
+// import logo from "../../img/logo/template.svg"
 import logox from '../../img/logo/12.svg'
 import "./Menu.css"
 
