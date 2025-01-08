@@ -5,6 +5,10 @@ body {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  background-color: #111111;
+  /* background-color: #111111; */
+  background: url(../src/img/snov.gif);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   font-family: "Cuprum", sans-serif,"Rubik Dirt", system-ui;
 }
