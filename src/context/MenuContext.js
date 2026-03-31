@@ -1,50 +1,64 @@
-import React, { createContext, useContext, useState } from 'react';
-import DataMenu from '../DataMenu/DataMenu';
-
-const STORAGE_KEY = 'bunker_menu_data';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const MenuContext = createContext(null);
 
 export const MenuProvider = ({ children }) => {
-  const [menuData, setMenuData] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : { ...DataMenu };
-    } catch {
-      return { ...DataMenu };
-    }
-  });
+  const [menuData, setMenuData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const persist = (data) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  useEffect(() => {
+    fetch('/api/menu')
+      .then((r) => {
+        if (!r.ok) throw new Error('Server error');
+        return r.json();
+      })
+      .then((data) => {
+        setMenuData(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Не вдалося підключитись до сервера. Переконайтесь, що сервер запущено.');
+        setLoading(false);
+      });
+  }, []);
+
+  const addItem = async (categoryKey, item) => {
+    const res = await fetch(`/api/menu/${categoryKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    });
+    const updated = await res.json();
+    setMenuData((prev) => ({ ...prev, [categoryKey]: updated }));
+  };
+
+  const updateItem = async (categoryKey, index, item) => {
+    const res = await fetch(`/api/menu/${categoryKey}/${index}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    });
+    const updated = await res.json();
+    setMenuData((prev) => ({ ...prev, [categoryKey]: updated }));
+  };
+
+  const deleteItem = async (categoryKey, index) => {
+    const res = await fetch(`/api/menu/${categoryKey}/${index}`, {
+      method: 'DELETE',
+    });
+    const updated = await res.json();
+    setMenuData((prev) => ({ ...prev, [categoryKey]: updated }));
+  };
+
+  const resetToDefault = async () => {
+    const res = await fetch('/api/reset', { method: 'POST' });
+    const data = await res.json();
     setMenuData(data);
   };
 
-  const addItem = (categoryKey, item) => {
-    const updated = { ...menuData, [categoryKey]: [...menuData[categoryKey], item] };
-    persist(updated);
-  };
-
-  const updateItem = (categoryKey, index, item) => {
-    const updated = { ...menuData };
-    updated[categoryKey] = [...updated[categoryKey]];
-    updated[categoryKey][index] = item;
-    persist(updated);
-  };
-
-  const deleteItem = (categoryKey, index) => {
-    const updated = { ...menuData };
-    updated[categoryKey] = updated[categoryKey].filter((_, i) => i !== index);
-    persist(updated);
-  };
-
-  const resetToDefault = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setMenuData({ ...DataMenu });
-  };
-
   return (
-    <MenuContext.Provider value={{ menuData, addItem, updateItem, deleteItem, resetToDefault }}>
+    <MenuContext.Provider value={{ menuData, loading, error, addItem, updateItem, deleteItem, resetToDefault }}>
       {children}
     </MenuContext.Provider>
   );
