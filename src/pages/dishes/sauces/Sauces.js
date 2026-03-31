@@ -1,10 +1,11 @@
 import React from "react";
 import './Sauces.css';
-import DataMenu from "../../../DataMenu/DataMenu";
+import { useMenu } from "../../../context/MenuContext";
 
 const Sauces = () => {
 
-const falseDataSauces = DataMenu.falseDataSauces;
+const { menuData } = useMenu();
+const falseDataSauces = menuData.falseDataSauces;
 
     return(
 

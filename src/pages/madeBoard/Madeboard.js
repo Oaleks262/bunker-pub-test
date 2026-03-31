@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "./Madeboard.css";
-import DataMenu from "../../DataMenu/DataMenu";
+import { useMenu } from "../../context/MenuContext";
 import addicon from "../../img/icon/add.svg";
 import deleteicon from "../../img/icon/delete.svg";
 import arrow from "../../img/icon/arrowback.svg"
 
 const Madeboard = () => {
-  const falseDataBeerBoard = DataMenu.falseDataBeerBoard;
+  const { menuData } = useMenu();
+  const falseDataBeerBoard = menuData.falseDataBeerBoard;
   const [yourBoardItems, setYourBoardItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 

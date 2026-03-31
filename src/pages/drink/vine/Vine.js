@@ -1,10 +1,11 @@
 import React from "react";
 import "./Vine.css"
-import DataMenu from "../../../DataMenu/DataMenu.js";
+import { useMenu } from "../../../context/MenuContext";
 
 const Vine = () => {
 
-    const falseDataVine = DataMenu.falseDataVine;
+    const { menuData } = useMenu();
+    const falseDataVine = menuData.falseDataVine;
     
 
     return(

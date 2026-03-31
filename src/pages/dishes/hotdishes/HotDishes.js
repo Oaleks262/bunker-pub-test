@@ -1,11 +1,12 @@
 import React from "react";
 import "./HotDishes.css";
-import DataMenu from "../../../DataMenu/DataMenu.js";
+import { useMenu } from "../../../context/MenuContext";
 
 
 const HotDishes = () => {
 
-const falseDataHotDishes = DataMenu.falseDataHotDishes;
+const { menuData } = useMenu();
+const falseDataHotDishes = menuData.falseDataHotDishes;
 
 return (
 

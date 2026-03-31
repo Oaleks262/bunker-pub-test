@@ -1,12 +1,13 @@
 import React from "react";
 import "./Snacks.css";
-import DataMenu from "../../../DataMenu/DataMenu.js";
+import { useMenu } from "../../../context/MenuContext";
 
 
 
 const Snacks = () => {
 
-const falseDataSnacks = DataMenu.falseDataSnacks;
+const { menuData } = useMenu();
+const falseDataSnacks = menuData.falseDataSnacks;
 
 return (
 

@@ -1,12 +1,13 @@
 import React from "react";
 import "./Promotion.css";
 import logo from "../../img/logo/template.svg"
-import DataMenu from "../../DataMenu/DataMenu";
+import { useMenu } from "../../context/MenuContext";
 import arrow from "../../img/icon/arrowback.svg"
 
 const Promotion = () =>{
 
-const falseDataPromotion = DataMenu.falseDataPromotion;
+const { menuData } = useMenu();
+const falseDataPromotion = menuData.falseDataPromotion;
 
     return (
 

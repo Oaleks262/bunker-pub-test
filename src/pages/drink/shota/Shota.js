@@ -1,10 +1,11 @@
 import React from "react";
 import'./Shota.css';
-import DataMenu from "../../../DataMenu/DataMenu.js";
+import { useMenu } from "../../../context/MenuContext";
 
 const Shota = () => {
 
-    const falseDataShota = DataMenu.falseDataShota;
+    const { menuData } = useMenu();
+    const falseDataShota = menuData.falseDataShota;
     
 
 

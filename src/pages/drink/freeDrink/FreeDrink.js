@@ -1,10 +1,11 @@
 import React from "react";
 import "./FreeDrink.css"
-import DataMenu from "../../../DataMenu/DataMenu.js";
+import { useMenu } from "../../../context/MenuContext";
 
 const FreeDrink = () => {
 
-    const falseDataFreeDrink = DataMenu.falseDataFreeDrink
+    const { menuData } = useMenu();
+    const falseDataFreeDrink = menuData.falseDataFreeDrink;
     
 
     return(
