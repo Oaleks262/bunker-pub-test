@@ -2,12 +2,34 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 const DEFAULT_MENU_FILE = path.join(__dirname, 'menu.default.json');
 const MENU_FILE = path.join(__dirname, 'menu.json');
+const UPLOADS_DIR = path.join(__dirname, '..', 'public', 'uploads');
+
+// Ensure uploads dir exists locally
+if (!process.env.VERCEL && !fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: UPLOADS_DIR,
+    filename: (req, file, cb) => {
+      const unique = Date.now() + '-' + Math.round(Math.random() * 1e6);
+      cb(null, unique + path.extname(file.originalname));
+    },
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (/^image\//.test(file.mimetype)) cb(null, true);
+    else cb(new Error('Тільки зображення'));
+  },
+});
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
@@ -51,34 +73,49 @@ const storage = isVercel
       },
     };
 
+// ─── Helper: get backgrounds for templates ───────────────────────────────────
+
+async function getBgUrls() {
+  try {
+    const menu = await storage.read();
+    return (menu.backgrounds || []).map(b => b.url);
+  } catch { return []; }
+}
+
 // ─── Page routes ─────────────────────────────────────────────────────────────
 
-app.get('/', (req, res) => res.render('index'));
-app.get('/menu', (req, res) => res.render('menu'));
+app.get('/', async (req, res) => res.render('index', { backgrounds: await getBgUrls() }));
+app.get('/menu', async (req, res) => res.render('menu', { backgrounds: await getBgUrls() }));
 
 app.get('/drink', async (req, res) => {
   const menu = await storage.read();
-  res.render('drink', { menu });
+  res.render('drink', { menu, backgrounds: (menu.backgrounds || []).map(b => b.url) });
 });
 
 app.get('/dishes', async (req, res) => {
   const menu = await storage.read();
-  res.render('dishes', { menu });
+  res.render('dishes', { menu, backgrounds: (menu.backgrounds || []).map(b => b.url) });
 });
 
 app.get('/promotion', async (req, res) => {
   const menu = await storage.read();
-  res.render('promotion', { promotions: menu.falseDataPromotion });
+  res.render('promotion', {
+    promotions: menu.falseDataPromotion,
+    backgrounds: (menu.backgrounds || []).map(b => b.url),
+  });
 });
 
 app.get('/board', async (req, res) => {
   const menu = await storage.read();
-  res.render('board', { items: menu.falseDataBeerBoard });
+  res.render('board', {
+    items: menu.falseDataBeerBoard,
+    backgrounds: (menu.backgrounds || []).map(b => b.url),
+  });
 });
 
-app.get('/admin', (req, res) => res.render('admin'));
+app.get('/admin', (req, res) => res.render('admin', { canUpload: !isVercel }));
 
-// ─── API routes ──────────────────────────────────────────────────────────────
+// ─── API: menu CRUD ───────────────────────────────────────────────────────────
 
 app.get('/api/menu', async (req, res) => {
   try { res.json(await storage.read()); }
@@ -124,6 +161,56 @@ app.delete('/api/menu/:categoryKey/:index', async (req, res) => {
     menu[categoryKey].splice(idx, 1);
     await storage.write(menu);
     res.json(menu[categoryKey]);
+  } catch { res.status(500).json({ error: 'Помилка сервера' }); }
+});
+
+// ─── API: backgrounds ─────────────────────────────────────────────────────────
+
+// Add background by URL
+app.post('/api/backgrounds', async (req, res) => {
+  try {
+    const { url, label } = req.body;
+    if (!url) return res.status(400).json({ error: 'URL обовʼязковий' });
+    const menu = await storage.read();
+    if (!menu.backgrounds) menu.backgrounds = [];
+    menu.backgrounds.push({ url, label: label || '' });
+    await storage.write(menu);
+    res.json(menu.backgrounds);
+  } catch { res.status(500).json({ error: 'Помилка сервера' }); }
+});
+
+// Upload background image (local only)
+app.post('/api/backgrounds/upload', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Файл не завантажено' });
+    const url = '/uploads/' + req.file.filename;
+    const label = req.body.label || req.file.originalname;
+    const menu = await storage.read();
+    if (!menu.backgrounds) menu.backgrounds = [];
+    menu.backgrounds.push({ url, label });
+    await storage.write(menu);
+    res.json(menu.backgrounds);
+  } catch (err) { res.status(500).json({ error: err.message || 'Помилка завантаження' }); }
+});
+
+// Delete background
+app.delete('/api/backgrounds/:index', async (req, res) => {
+  try {
+    const idx = parseInt(req.params.index, 10);
+    const menu = await storage.read();
+    if (!menu.backgrounds || idx < 0 || idx >= menu.backgrounds.length)
+      return res.status(404).json({ error: 'Не знайдено' });
+
+    // Delete uploaded file from disk if local
+    const bg = menu.backgrounds[idx];
+    if (!isVercel && bg.url.startsWith('/uploads/')) {
+      const filePath = path.join(__dirname, '..', 'public', bg.url);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    menu.backgrounds.splice(idx, 1);
+    await storage.write(menu);
+    res.json(menu.backgrounds);
   } catch { res.status(500).json({ error: 'Помилка сервера' }); }
 });
 

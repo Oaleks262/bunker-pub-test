@@ -5,6 +5,10 @@
   <title>Напої — Bunker Pub</title>
 </head>
 <body>
+  <div id="bg1" class="bg-layer"></div>
+  <div id="bg2" class="bg-layer"></div>
+  <script id="bg-data" type="application/json"><%- JSON.stringify(backgrounds) %></script>
+
   <div class="page">
     <div class="container">
       <a href="/menu" class="arrow">
@@ -20,116 +24,99 @@
         <button class="tab" data-target="shota">Сети</button>
       </div>
 
-      <!-- Вино -->
       <div class="tab-content active" id="vine">
         <h2 class="section-title">Вино</h2>
         <div class="menu-table">
           <div class="menu-row menu-header">
             <span>Назва</span><span>Опис</span><span>Об'єм</span><span>Ціна</span>
           </div>
-          <% menu.falseDataVine.forEach(item => { %>
-          <div class="menu-row">
-            <span><%= item.name %></span>
-            <span><%= item.about %></span>
-            <span><%= item.volume %></span>
-            <span><%= item.price %></span>
+          <% menu.falseDataVine.forEach(function(item, i) { %>
+          <div class="menu-row" style="animation-delay:<%- i * 0.04 %>s">
+            <span><%= item.name %></span><span><%= item.about %></span>
+            <span><%= item.volume %></span><span><%= item.price %></span>
           </div>
           <% }) %>
         </div>
       </div>
 
-      <!-- Коктейлі -->
       <div class="tab-content" id="coctel">
         <h2 class="section-title">Коктейлі</h2>
         <div class="menu-table">
           <div class="menu-row menu-header">
             <span>Назва</span><span>Опис</span><span>Об'єм</span><span>Ціна</span>
           </div>
-          <% menu.falseDataCoctel.forEach(item => { %>
-          <div class="menu-row">
-            <span><%= item.name %></span>
-            <span><%= item.about %></span>
-            <span><%= item.volume %></span>
-            <span><%= item.price %></span>
+          <% menu.falseDataCoctel.forEach(function(item, i) { %>
+          <div class="menu-row" style="animation-delay:<%- i * 0.04 %>s">
+            <span><%= item.name %></span><span><%= item.about %></span>
+            <span><%= item.volume %></span><span><%= item.price %></span>
           </div>
           <% }) %>
         </div>
       </div>
 
-      <!-- Залпові -->
       <div class="tab-content" id="firedring">
         <h2 class="section-title">Залпові коктейлі</h2>
         <div class="menu-table">
           <div class="menu-row menu-header">
             <span>Назва</span><span>Опис</span><span>Об'єм</span><span>Ціна</span>
           </div>
-          <% menu.falseDataFireDrink.forEach(item => { %>
-          <div class="menu-row">
-            <span><%= item.name %></span>
-            <span><%= item.about %></span>
-            <span><%= item.volume %></span>
-            <span><%= item.price %></span>
+          <% menu.falseDataFireDrink.forEach(function(item, i) { %>
+          <div class="menu-row" style="animation-delay:<%- i * 0.04 %>s">
+            <span><%= item.name %></span><span><%= item.about %></span>
+            <span><%= item.volume %></span><span><%= item.price %></span>
           </div>
           <% }) %>
         </div>
       </div>
 
-      <!-- Алкогольні -->
       <div class="tab-content" id="alcohol">
         <h2 class="section-title">Алкогольні напої</h2>
         <div class="menu-table">
           <div class="menu-row menu-header">
             <span>Назва</span><span>Опис</span><span>Об'єм</span><span>Ціна</span>
           </div>
-          <% menu.falseDataAlcohol.forEach(item => { %>
-          <div class="menu-row">
-            <span><%= item.name %></span>
-            <span><%= item.about %></span>
-            <span><%= item.volume %></span>
-            <span><%= item.price %></span>
+          <% menu.falseDataAlcohol.forEach(function(item, i) { %>
+          <div class="menu-row" style="animation-delay:<%- i * 0.04 %>s">
+            <span><%= item.name %></span><span><%= item.about %></span>
+            <span><%= item.volume %></span><span><%= item.price %></span>
           </div>
           <% }) %>
         </div>
       </div>
 
-      <!-- Безалкогольні -->
       <div class="tab-content" id="freedrink">
         <h2 class="section-title">Безалкогольні напої</h2>
         <div class="menu-table">
           <div class="menu-row menu-header">
             <span>Назва</span><span></span><span>Об'єм</span><span>Ціна</span>
           </div>
-          <% menu.falseDataFreeDrink.forEach(item => { %>
-          <div class="menu-row">
-            <span><%= item.name %></span>
-            <span></span>
-            <span><%= item.volume %></span>
-            <span><%= item.price %></span>
+          <% menu.falseDataFreeDrink.forEach(function(item, i) { %>
+          <div class="menu-row" style="animation-delay:<%- i * 0.04 %>s">
+            <span><%= item.name %></span><span></span>
+            <span><%= item.volume %></span><span><%= item.price %></span>
           </div>
           <% }) %>
         </div>
       </div>
 
-      <!-- Сети -->
       <div class="tab-content" id="shota">
         <h2 class="section-title">Сети</h2>
         <div class="menu-table">
           <div class="menu-row menu-header">
             <span>Назва</span><span>Опис</span><span>Об'єм</span><span>Ціна</span>
           </div>
-          <% menu.falseDataShota.forEach(item => { %>
-          <div class="menu-row">
-            <span><%= item.name %></span>
-            <span><%= item.about %></span>
-            <span><%= item.volume %></span>
-            <span><%= item.price %></span>
+          <% menu.falseDataShota.forEach(function(item, i) { %>
+          <div class="menu-row" style="animation-delay:<%- i * 0.04 %>s">
+            <span><%= item.name %></span><span><%= item.about %></span>
+            <span><%= item.volume %></span><span><%= item.price %></span>
           </div>
           <% }) %>
         </div>
       </div>
-
     </div>
   </div>
+
+  <script src="/js/bg.js"></script>
   <script src="/js/tabs.js"></script>
 </body>
 </html>

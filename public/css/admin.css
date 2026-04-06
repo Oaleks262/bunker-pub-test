@@ -409,6 +409,111 @@ body {
 .admin-form-group input:focus,
 .admin-form-group textarea:focus { border-color: #db1f1f; }
 
+/* ─── Backgrounds section ───────────────────────────────────────────────────── */
+.bg-add-form {
+  background: #1e1e1e;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.bg-add-form h3 {
+  color: #db1f1f;
+  font-size: 16px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bg-form-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bg-form-row input[type="text"],
+.bg-form-row input[type="file"] {
+  background: #141414;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: #e0e0e0;
+  font-family: 'Cuprum', sans-serif;
+  font-size: 14px;
+  outline: none;
+  flex: 1;
+  min-width: 180px;
+  transition: border-color 0.15s;
+}
+
+.bg-form-row input[type="text"]:focus { border-color: #db1f1f; }
+
+.bg-vercel-note {
+  color: #666;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.bg-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.bg-card {
+  background: #1e1e1e;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.bg-card:hover {
+  border-color: #db1f1f;
+  transform: translateY(-2px);
+}
+
+.bg-card-thumb {
+  width: 100%;
+  height: 130px;
+  background-size: cover;
+  background-position: center;
+  background-color: #111;
+}
+
+.bg-card-info {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bg-card-label {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bg-card-url {
+  color: #666;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bg-card .btn-delete {
+  width: 100%;
+  border-radius: 0;
+  padding: 7px;
+  text-align: center;
+}
+
 /* ─── Responsive ────────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .admin-layout { flex-direction: column; }

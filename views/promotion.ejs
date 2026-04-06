@@ -5,6 +5,10 @@
   <title>Акції — Bunker Pub</title>
 </head>
 <body>
+  <div id="bg1" class="bg-layer"></div>
+  <div id="bg2" class="bg-layer"></div>
+  <script id="bg-data" type="application/json"><%- JSON.stringify(backgrounds) %></script>
+
   <div class="page">
     <div class="container">
       <a href="/" class="arrow">
@@ -14,13 +18,15 @@
         <img src="/img/logo/template.svg" alt="Bunker Pub" class="logo">
       </div>
       <h2 class="section-title">Акційні пропозиції</h2>
-      <% promotions.forEach(p => { %>
-      <div class="promo-item">
+      <% promotions.forEach(function(p, i) { %>
+      <div class="promo-item" style="animation-delay:<%- i * 0.1 %>s">
         <p class="promo-date">Акція діє до: <span><%= p.data %></span></p>
         <p class="promo-text"><%= p.promotion %></p>
       </div>
       <% }) %>
     </div>
   </div>
+
+  <script src="/js/bg.js"></script>
 </body>
 </html>

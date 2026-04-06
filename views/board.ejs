@@ -5,6 +5,10 @@
   <title>Своя дошка — Bunker Pub</title>
 </head>
 <body>
+  <div id="bg1" class="bg-layer"></div>
+  <div id="bg2" class="bg-layer"></div>
+  <script id="bg-data" type="application/json"><%- JSON.stringify(backgrounds) %></script>
+
   <div class="page">
     <div class="container">
       <a href="/menu" class="arrow">
@@ -12,7 +16,6 @@
       </a>
       <h2 class="section-title">Створи свою дошку</h2>
 
-      <!-- Кошик -->
       <div class="board-cart" id="cart">
         <div class="menu-row menu-header">
           <span>Назва</span><span>Кількість</span><span>Ціна</span><span></span>
@@ -24,15 +27,15 @@
         </div>
       </div>
 
-      <!-- Список позицій -->
       <div class="menu-table" style="margin-top:24px">
         <div class="menu-row menu-header">
           <span>Назва</span><span>Вага (г)</span><span>Ціна</span><span></span>
         </div>
-        <% items.forEach((item, i) => { %>
+        <% items.forEach(function(item, i) { %>
         <div class="menu-row board-item-row"
           data-name="<%= item.name %>"
-          data-price="<%= item.price %>">
+          data-price="<%= item.price %>"
+          style="animation-delay:<%- i * 0.03 %>s">
           <span><%= item.name %></span>
           <span><%= item.volume %> г</span>
           <span><%= item.price %> грн</span>
@@ -46,6 +49,8 @@
       </div>
     </div>
   </div>
+
+  <script src="/js/bg.js"></script>
   <script src="/js/board.js"></script>
 </body>
 </html>

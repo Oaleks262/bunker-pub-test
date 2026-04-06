@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <!-- Login screen -->
+  <!-- Login -->
   <div class="admin-login" id="loginScreen">
     <div class="admin-login-box">
       <div class="admin-login-logo">BUNKER PUB</div>
@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <!-- Admin panel -->
+  <!-- Panel -->
   <div class="admin-layout" id="adminPanel" style="display:none">
     <aside class="admin-sidebar">
       <div class="admin-sidebar-header">
@@ -35,17 +35,47 @@
       </div>
     </aside>
 
-    <main class="admin-main">
-      <div class="admin-main-header">
-        <h1 id="categoryTitle"></h1>
-        <button class="btn-primary" onclick="openAddModal()">+ Додати позицію</button>
+    <main class="admin-main" id="adminMain">
+      <!-- Menu section -->
+      <div id="menuSection">
+        <div class="admin-main-header">
+          <h1 id="categoryTitle"></h1>
+          <button class="btn-primary" onclick="openAddModal()">+ Додати позицію</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="menuTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <p class="admin-empty" id="emptyMsg" style="display:none">Немає позицій. Додайте першу!</p>
+        </div>
       </div>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead id="tableHead"></thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-        <p class="admin-empty" id="emptyMsg" style="display:none">Немає позицій. Додайте першу!</p>
+
+      <!-- Backgrounds section -->
+      <div id="bgSection" style="display:none">
+        <div class="admin-main-header">
+          <h1>Фони сайту</h1>
+        </div>
+        <div class="admin-table-wrap">
+          <div class="bg-add-form">
+            <h3>Додати фон</h3>
+            <div class="bg-form-row">
+              <input type="text" id="bgUrl" placeholder="URL зображення (https://... або /uploads/...)" />
+              <input type="text" id="bgLabel" placeholder="Назва (необов'язково)" />
+              <button class="btn-primary" onclick="addBgUrl()">Додати URL</button>
+            </div>
+            <% if (canUpload) { %>
+            <div class="bg-form-row" style="margin-top:12px">
+              <input type="file" id="bgFile" accept="image/*" />
+              <input type="text" id="bgFileLabel" placeholder="Назва (необов'язково)" />
+              <button class="btn-primary" onclick="uploadBgFile()">Завантажити файл</button>
+            </div>
+            <% } else { %>
+            <p class="bg-vercel-note">Завантаження файлів недоступне на Vercel. Використовуйте URL.</p>
+            <% } %>
+          </div>
+          <div id="bgList" class="bg-list"></div>
+        </div>
       </div>
     </main>
   </div>
@@ -65,7 +95,7 @@
     </div>
   </div>
 
-  <!-- Delete confirm modal -->
+  <!-- Delete confirm -->
   <div class="admin-modal-overlay" id="deleteOverlay" onclick="closeDelete()">
     <div class="admin-modal admin-modal-sm" onclick="event.stopPropagation()">
       <div class="admin-modal-header">
@@ -80,7 +110,7 @@
     </div>
   </div>
 
-  <!-- Reset confirm modal -->
+  <!-- Reset confirm -->
   <div class="admin-modal-overlay" id="resetOverlay" onclick="closeReset()">
     <div class="admin-modal admin-modal-sm" onclick="event.stopPropagation()">
       <div class="admin-modal-header">
