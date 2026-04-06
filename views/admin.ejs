@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cuprum:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Адмін — Bunker Pub</title>
+</head>
+<body>
+
+  <!-- Login screen -->
+  <div class="admin-login" id="loginScreen">
+    <div class="admin-login-box">
+      <div class="admin-login-logo">BUNKER PUB</div>
+      <h2>Адмін панель</h2>
+      <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="off">
+      <p class="login-error" id="loginError">Невірний пароль</p>
+      <button class="btn-primary" onclick="doLogin()">Увійти</button>
+    </div>
+  </div>
+
+  <!-- Admin panel -->
+  <div class="admin-layout" id="adminPanel" style="display:none">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <span class="admin-logo-text">BUNKER PUB</span>
+        <span class="admin-subtitle">Адмін панель</span>
+      </div>
+      <nav class="admin-nav" id="sidebarNav"></nav>
+      <div class="admin-sidebar-footer">
+        <button class="btn-danger-outline" onclick="confirmReset()">Скинути всі дані</button>
+        <a href="/" class="btn-ghost">← На сайт</a>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-main-header">
+        <h1 id="categoryTitle"></h1>
+        <button class="btn-primary" onclick="openAddModal()">+ Додати позицію</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <p class="admin-empty" id="emptyMsg" style="display:none">Немає позицій. Додайте першу!</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit modal -->
+  <div class="admin-modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="admin-modal" onclick="event.stopPropagation()">
+      <div class="admin-modal-header">
+        <h2 id="modalTitle">Нова позиція</h2>
+        <button class="admin-modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="admin-modal-body" id="modalBody"></div>
+      <div class="admin-modal-footer">
+        <button class="btn-ghost" onclick="closeModal()">Скасувати</button>
+        <button class="btn-primary" onclick="saveModal()">Зберегти</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirm modal -->
+  <div class="admin-modal-overlay" id="deleteOverlay" onclick="closeDelete()">
+    <div class="admin-modal admin-modal-sm" onclick="event.stopPropagation()">
+      <div class="admin-modal-header">
+        <h2>Підтвердження</h2>
+        <button class="admin-modal-close" onclick="closeDelete()">✕</button>
+      </div>
+      <div class="admin-modal-body"><p>Видалити цю позицію?</p></div>
+      <div class="admin-modal-footer">
+        <button class="btn-ghost" onclick="closeDelete()">Скасувати</button>
+        <button class="btn-danger" onclick="doDelete()">Видалити</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset confirm modal -->
+  <div class="admin-modal-overlay" id="resetOverlay" onclick="closeReset()">
+    <div class="admin-modal admin-modal-sm" onclick="event.stopPropagation()">
+      <div class="admin-modal-header">
+        <h2>Скинути всі дані</h2>
+        <button class="admin-modal-close" onclick="closeReset()">✕</button>
+      </div>
+      <div class="admin-modal-body"><p>Всі зміни будуть скасовані, меню повернеться до початкового стану. Продовжити?</p></div>
+      <div class="admin-modal-footer">
+        <button class="btn-ghost" onclick="closeReset()">Скасувати</button>
+        <button class="btn-danger" onclick="doReset()">Скинути</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

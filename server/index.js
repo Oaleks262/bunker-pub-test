@@ -9,68 +9,87 @@ const PORT = process.env.PORT || 3001;
 const DEFAULT_MENU_FILE = path.join(__dirname, 'menu.default.json');
 const MENU_FILE = path.join(__dirname, 'menu.json');
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '..', 'views'));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(cors());
 app.use(express.json());
 
-// ─── Storage: Vercel KV у продакшені, файлова система локально ───────────────
+// ─── Storage ─────────────────────────────────────────────────────────────────
 
 const isVercel = Boolean(process.env.KV_REST_API_URL);
 
 const storage = isVercel
   ? (() => {
       const { kv } = require('@vercel/kv');
-      const KV_KEY = 'bunker_menu';
+      const KEY = 'bunker_menu';
       return {
         read: async () => {
-          const data = await kv.get(KV_KEY);
+          const data = await kv.get(KEY);
           if (!data) {
-            const defaultData = JSON.parse(fs.readFileSync(DEFAULT_MENU_FILE, 'utf8'));
-            await kv.set(KV_KEY, defaultData);
-            return defaultData;
+            const def = JSON.parse(fs.readFileSync(DEFAULT_MENU_FILE, 'utf8'));
+            await kv.set(KEY, def);
+            return def;
           }
           return data;
         },
-        write: async (data) => {
-          await kv.set(KV_KEY, data);
-        },
+        write: async (data) => kv.set(KEY, data),
         reset: async () => {
-          const defaultData = JSON.parse(fs.readFileSync(DEFAULT_MENU_FILE, 'utf8'));
-          await kv.set(KV_KEY, defaultData);
-          return defaultData;
+          const def = JSON.parse(fs.readFileSync(DEFAULT_MENU_FILE, 'utf8'));
+          await kv.set(KEY, def);
+          return def;
         },
       };
     })()
   : {
       read: async () => JSON.parse(fs.readFileSync(MENU_FILE, 'utf8')),
-      write: async (data) => fs.writeFileSync(MENU_FILE, JSON.stringify(data, null, 2), 'utf8'),
+      write: async (data) => fs.writeFileSync(MENU_FILE, JSON.stringify(data, null, 2)),
       reset: async () => {
-        const defaultData = fs.readFileSync(DEFAULT_MENU_FILE, 'utf8');
-        fs.writeFileSync(MENU_FILE, defaultData);
-        return JSON.parse(defaultData);
+        const raw = fs.readFileSync(DEFAULT_MENU_FILE, 'utf8');
+        fs.writeFileSync(MENU_FILE, raw);
+        return JSON.parse(raw);
       },
     };
 
-// ─── API routes ───────────────────────────────────────────────────────────────
+// ─── Page routes ─────────────────────────────────────────────────────────────
 
-// GET all menu data
+app.get('/', (req, res) => res.render('index'));
+app.get('/menu', (req, res) => res.render('menu'));
+
+app.get('/drink', async (req, res) => {
+  const menu = await storage.read();
+  res.render('drink', { menu });
+});
+
+app.get('/dishes', async (req, res) => {
+  const menu = await storage.read();
+  res.render('dishes', { menu });
+});
+
+app.get('/promotion', async (req, res) => {
+  const menu = await storage.read();
+  res.render('promotion', { promotions: menu.falseDataPromotion });
+});
+
+app.get('/board', async (req, res) => {
+  const menu = await storage.read();
+  res.render('board', { items: menu.falseDataBeerBoard });
+});
+
+app.get('/admin', (req, res) => res.render('admin'));
+
+// ─── API routes ──────────────────────────────────────────────────────────────
+
 app.get('/api/menu', async (req, res) => {
-  try {
-    res.json(await storage.read());
-  } catch (err) {
-    res.status(500).json({ error: 'Не вдалося прочитати меню' });
-  }
+  try { res.json(await storage.read()); }
+  catch { res.status(500).json({ error: 'Не вдалося прочитати меню' }); }
 });
 
-// POST reset to defaults
 app.post('/api/reset', async (req, res) => {
-  try {
-    res.json(await storage.reset());
-  } catch (err) {
-    res.status(500).json({ error: 'Не вдалося скинути дані' });
-  }
+  try { res.json(await storage.reset()); }
+  catch { res.status(500).json({ error: 'Не вдалося скинути дані' }); }
 });
 
-// POST add item to category
 app.post('/api/menu/:categoryKey', async (req, res) => {
   try {
     const { categoryKey } = req.params;
@@ -79,57 +98,39 @@ app.post('/api/menu/:categoryKey', async (req, res) => {
     menu[categoryKey].push(req.body);
     await storage.write(menu);
     res.json(menu[categoryKey]);
-  } catch (err) {
-    res.status(500).json({ error: 'Не вдалося додати позицію' });
-  }
+  } catch { res.status(500).json({ error: 'Помилка сервера' }); }
 });
 
-// PUT update item
 app.put('/api/menu/:categoryKey/:index', async (req, res) => {
   try {
     const { categoryKey } = req.params;
-    const index = parseInt(req.params.index, 10);
+    const idx = parseInt(req.params.index, 10);
     const menu = await storage.read();
-    if (!menu[categoryKey]) return res.status(404).json({ error: 'Категорію не знайдено' });
-    if (index < 0 || index >= menu[categoryKey].length) return res.status(404).json({ error: 'Позицію не знайдено' });
-    menu[categoryKey][index] = req.body;
+    if (!menu[categoryKey] || idx < 0 || idx >= menu[categoryKey].length)
+      return res.status(404).json({ error: 'Не знайдено' });
+    menu[categoryKey][idx] = req.body;
     await storage.write(menu);
     res.json(menu[categoryKey]);
-  } catch (err) {
-    res.status(500).json({ error: 'Не вдалося оновити позицію' });
-  }
+  } catch { res.status(500).json({ error: 'Помилка сервера' }); }
 });
 
-// DELETE item
 app.delete('/api/menu/:categoryKey/:index', async (req, res) => {
   try {
     const { categoryKey } = req.params;
-    const index = parseInt(req.params.index, 10);
+    const idx = parseInt(req.params.index, 10);
     const menu = await storage.read();
-    if (!menu[categoryKey]) return res.status(404).json({ error: 'Категорію не знайдено' });
-    if (index < 0 || index >= menu[categoryKey].length) return res.status(404).json({ error: 'Позицію не знайдено' });
-    menu[categoryKey].splice(index, 1);
+    if (!menu[categoryKey] || idx < 0 || idx >= menu[categoryKey].length)
+      return res.status(404).json({ error: 'Не знайдено' });
+    menu[categoryKey].splice(idx, 1);
     await storage.write(menu);
     res.json(menu[categoryKey]);
-  } catch (err) {
-    res.status(500).json({ error: 'Не вдалося видалити позицію' });
-  }
+  } catch { res.status(500).json({ error: 'Помилка сервера' }); }
 });
 
-// ─── Static React build (тільки локально, на Vercel це не потрібно) ──────────
-if (process.env.NODE_ENV === 'production' && !isVercel) {
-  app.use(express.static(path.join(__dirname, '..', 'build')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
-  });
-}
+// ─── Start ───────────────────────────────────────────────────────────────────
 
-// ─── Запуск локально (не на Vercel) ──────────────────────────────────────────
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Сервер запущено: http://localhost:${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
 }
 
-// Vercel потребує export
 module.exports = app;

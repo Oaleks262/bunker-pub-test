@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <%- include('partials/head') %>
+  <title>Своя дошка — Bunker Pub</title>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+      <a href="/menu" class="arrow">
+        <img src="/img/icon/arrowback.svg" alt=""> Повернутись назад
+      </a>
+      <h2 class="section-title">Створи свою дошку</h2>
+
+      <!-- Кошик -->
+      <div class="board-cart" id="cart">
+        <div class="menu-row menu-header">
+          <span>Назва</span><span>Кількість</span><span>Ціна</span><span></span>
+        </div>
+        <div id="cart-items"></div>
+        <div class="board-total-row">
+          <button class="board-reset-btn" id="resetBtn">Почни спочатку</button>
+          <p class="board-total">Ціна за дошку: <span id="totalPrice">0</span> грн.</p>
+        </div>
+      </div>
+
+      <!-- Список позицій -->
+      <div class="menu-table" style="margin-top:24px">
+        <div class="menu-row menu-header">
+          <span>Назва</span><span>Вага (г)</span><span>Ціна</span><span></span>
+        </div>
+        <% items.forEach((item, i) => { %>
+        <div class="menu-row board-item-row"
+          data-name="<%= item.name %>"
+          data-price="<%= item.price %>">
+          <span><%= item.name %></span>
+          <span><%= item.volume %> г</span>
+          <span><%= item.price %> грн</span>
+          <span>
+            <button class="add-btn" onclick="addToCart(this)">
+              <img src="/img/icon/add.svg" alt="Додати">
+            </button>
+          </span>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  <script src="/js/board.js"></script>
+</body>
+</html>

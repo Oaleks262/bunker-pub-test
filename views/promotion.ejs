@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <%- include('partials/head') %>
+  <title>Акції — Bunker Pub</title>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+      <a href="/" class="arrow">
+        <img src="/img/icon/arrowback.svg" alt=""> Повернутись назад
+      </a>
+      <div class="promo-logo">
+        <img src="/img/logo/template.svg" alt="Bunker Pub" class="logo">
+      </div>
+      <h2 class="section-title">Акційні пропозиції</h2>
+      <% promotions.forEach(p => { %>
+      <div class="promo-item">
+        <p class="promo-date">Акція діє до: <span><%= p.data %></span></p>
+        <p class="promo-text"><%= p.promotion %></p>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>
